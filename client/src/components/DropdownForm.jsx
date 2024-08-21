@@ -5,23 +5,24 @@ import { ChevronDownIcon } from './icons/ChevronDownIcon';
 const DropdownForm = ({ label, options, selectedValue, onSelect }) => {
   return (
     <>
-      <span className="font-semibold">{label}</span>
+      <span className="font-medium text-sm">{label}</span>
       <Dropdown
+        placement='bottom-start'
         classNames={{
-          content: "py-1 px-1 border border-default-200 bg-white",
+          content: "mt-2 p-2 block w-full border rounded",
         }}
       >
-        <DropdownTrigger className="bg-white border rounded-sm flex justify-between">
+        <DropdownTrigger className="w-full">
           <Button 
             color='default'
             variant='light'
-            className="capitalize"
-            endContent={<ChevronDownIcon/>}
+            className="w-full capitalize justify-between bg-white border rounded flex items-center"
+            endContent={<ChevronDownIcon />}
           >
             {selectedValue ? selectedValue : `${label}`}
           </Button>
         </DropdownTrigger>
-        <DropdownMenu onAction={onSelect} className="bg-white">
+        <DropdownMenu onAction={onSelect} className="bg-white w-full">
           {options.map((option) => (
             <DropdownItem key={option.uid} value={option.uid} className="bg-white">
               {option.name}

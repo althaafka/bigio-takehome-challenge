@@ -354,8 +354,8 @@ const StoryList = () => {
 
   return (
     <div className="px-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Story Management</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold mb-4">Story Management</h2>
       </div>
       <Table
         aria-label=""
