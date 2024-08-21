@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import DropdownForm from '../components/DropdownForm';
 import { WithContext as ReactTags } from 'react-tag-input';
+import { VerticalDotsIcon } from '../components/icons/VerticalDotsIcon';
+import {  Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from '@nextui-org/react';
+import { PlusIcon } from '../components/icons/PlusIcon';
 
 const categoryOptions = [
   { name: 'Financial', uid: 'financial' },
@@ -20,15 +23,26 @@ const AddStory = () => {
   const [category, setCategory] = useState('');
   const [status, setStatus] = useState('');
   const [tags, setTags] = useState([]);
+  const [chapters, setChapters] = useState([]);
 
   const handleDelete = (i) => {
-    console.log(i)
-    console.log(tags)
     setTags(tags.filter((_, index) => index !== i));
   };
 
   const handleAddition = (tag) => {
     setTags([...tags, tag]);
+  };
+
+  const handleAddChapter = () => {
+    const newChapter = {
+      title: `Chapter ${chapters.length + 1}`,
+      lastUpdated: new Date().toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }),
+    };
+    setChapters([...chapters, newChapter]);
   };
 
   const handleSaveStory = () => {
@@ -39,8 +53,10 @@ const AddStory = () => {
       category,
       status,
       tags,
+      chapters,
     };
     console.log(data);
+    // Add logic to save the story
   };
 
   const handleCancel = () => {
@@ -103,7 +119,7 @@ const AddStory = () => {
               placeholder='Add new tag'
               classNames={{
                 tagsInput: 'mt-1 p-2 w-full border rounded',
-                tag: 'bg-orange-500 text-white rounded px-2 py-1 mr-2 mb-2 inline-flex items-center',
+                tag: 'bg-orange-500 text-white rounded-full px-3 py-1 mr-2 mb-2 inline-flex items-center',
                 tagText: 'text-white',
                 remove: 'ml-2 text-white cursor-pointer',
                 input: 'w-full p-2 rounded border',
@@ -111,7 +127,6 @@ const AddStory = () => {
               maxTags={5}
               inputFieldPosition="bottom"
             />
-
           </div>
         </div>
 
@@ -133,17 +148,57 @@ const AddStory = () => {
           </div>
         </div>
 
+        <div className="mt-8">
+          <div className="mb-4 flex justify-end">
+            <Button color="primary" endContent={<PlusIcon />} className="bg-orange1 rounded-full !important" onClick={handleAddChapter}>
+              Add New
+            </Button>
+          </div>
+          <table className="min-w-full bg-white border rounded text-sm">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 text-left font-medium">Title</th>
+                <th className="px-4 py-2 text-left font-medium">Last Updated</th>
+                <th className="px-4 py-2 text-left"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {chapters.map((chapter, index) => (
+                <tr key={index}>
+                  <td className="px-4 py-2 border-t">{chapter.title}</td>
+                  <td className="px-4 py-2 border-t">{chapter.lastUpdated}</td>
+                  <td className="px-4 py-2 border-t text-right">
+                  <div className="relative flex justify-end items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <VerticalDotsIcon className="text-default-300" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem>Delete</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
         <div className="flex justify-end mt-6">
           <button
             type="button"
-            className="mr-4 bg-gray-300 text-black px-4 py-2 rounded"
+            className="mr-4 bg-gray-300 text-black px-4 py-2 rounded-full"
             onClick={handleCancel}
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="bg-orange1 text-white px-4 py-2 rounded"
+            className="bg-orange1 text-white px-6 py-2 rounded-full"
           >
             Save
           </button>
