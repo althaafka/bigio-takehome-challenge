@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DropdownForm from '../components/DropdownForm';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { VerticalDotsIcon } from '../components/icons/VerticalDotsIcon';
@@ -19,14 +19,19 @@ const statusOptions = [
 ];
 
 const AddStory = () => {
-  const [title, setTitle] = useState('');
-  const [writer, setWriter] = useState('');
-  const [synopsis, setSynopsis] = useState('');
-  const [category, setCategory] = useState('');
-  const [status, setStatus] = useState('');
-  const [tags, setTags] = useState([]);
-  const { chapters } = useStory(); 
+  const { chapters, storyData, updateStoryData } = useStory();
   const navigate = useNavigate();
+
+  const [title, setTitle] = useState(storyData.title);
+  const [writer, setWriter] = useState(storyData.writer);
+  const [synopsis, setSynopsis] = useState(storyData.synopsis);
+  const [category, setCategory] = useState(storyData.category);
+  const [status, setStatus] = useState(storyData.status);
+  const [tags, setTags] = useState(storyData.tags);
+
+  useEffect(() => {
+    updateStoryData({ title, writer, synopsis, category, status, tags });
+  }, [title, writer, synopsis, category, status, tags, updateStoryData]);
 
   const handleDelete = (i) => {
     setTags(tags.filter((_, index) => index !== i));
@@ -47,10 +52,11 @@ const AddStory = () => {
       chapters, 
     };
     console.log(data);
+    // Add logic to save the story
   };
 
   const handleAddChapter = () => {
-    navigate('/story/add-chapter')
+    navigate('/story/add-chapter');
   }
 
   const handleCancel = () => {
