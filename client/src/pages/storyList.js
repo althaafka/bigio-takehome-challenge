@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   Table,
   TableHeader,
@@ -8,8 +8,8 @@ import {
   TableCell,
   Input,
   Button,
-  DropdownTrigger,
   Dropdown,
+  DropdownTrigger,
   DropdownMenu,
   DropdownItem,
   Chip,
@@ -22,24 +22,36 @@ import { PlusIcon } from '../components/icons/PlusIcon';
 import { VerticalDotsIcon } from '../components/icons/VerticalDotsIcon';
 import { SearchIcon } from '../components/icons/SearchIcon';
 import { FilterIcon } from '../components/icons/FilterIcon';
+import DropdownForm from '../components/DropdownForm';
 
 const columns = [
-    { name: "No", uid: "nomor" },  
-    { name: "Title", uid: "title" },
-    { name: "Writers", uid: "writer" },
-    { name: "Category", uid: "category" },
-    { name: "Keyword", uid: "keywords" },
-    { name: "Status", uid: "status" },
-    { name: "", uid: "actions" },
-  ];
+  { name: "No", uid: "nomor" },
+  { name: "Title", uid: "title" },
+  { name: "Writers", uid: "writer" },
+  { name: "Category", uid: "category" },
+  { name: "Keyword", uid: "keywords" },
+  { name: "Status", uid: "status" },
+  { name: "", uid: "actions" },
+];
 
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 const statusOptions = [
-  { name: "Draft", uid: "active" },
-  { name: "Publish", uid: "paused" },
+  { name: "Draft", uid: "draft" },
+  { name: "Publish", uid: "publish" },
+];
+
+const categoryOptions = [
+  { name: "Adventure", uid: "adventure" },
+  { name: "Mystery", uid: "mystery" },
+  { name: "Romance", uid: "romance" },
+  { name: "Science", uid: "science" },
+  { name: "Fantasy", uid: "fantasy" },
+  { name: "History", uid: "history" },
+  { name: "Action", uid: "action" },
+  { name: "Strategy", uid: "strategy" },
 ];
 
 const stories = [
@@ -134,19 +146,20 @@ const INITIAL_VISIBLE_COLUMNS = ['nomor', 'title', 'writer', 'category', 'keywor
 const rowsPerPage = 8;
 
 const StoryList = () => {
-  const [filterValue, setFilterValue] = React.useState('');
-  const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [categoryFilter, setCategoryFilter] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState('');
-  const [page, setPage] = React.useState(1);
+  const [filterValue, setFilterValue] = useState('');
+  const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [tempCategoryFilter, setTempCategoryFilter] = useState('');
+  const [tempStatusFilter, setTempStatusFilter] = useState('');
+  const [page, setPage] = useState(1);
 
-  const headerColumns = React.useMemo(() => {
+  const headerColumns = useMemo(() => {
     if (visibleColumns === 'all') return columns;
-
     return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
   }, [visibleColumns]);
 
-  const filteredItems = React.useMemo(() => {
+  const filteredItems = useMemo(() => {
     let filteredStories = [...stories];
 
     if (filterValue) {
@@ -172,24 +185,23 @@ const StoryList = () => {
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
     return filteredItems.slice(start, end);
   }, [page, filteredItems]);
 
-  const handleFilterApply = (category, status) => {
-    setCategoryFilter(category);
-    setStatusFilter(status);
+  const handleFilterApply = () => {
+    setCategoryFilter(tempCategoryFilter);
+    setStatusFilter(tempStatusFilter);
   };
 
   const handleFilterReset = () => {
-    setCategoryFilter('');
-    setStatusFilter('');
+    setTempCategoryFilter('');
+    setTempStatusFilter('');
   };
 
-  const renderCell = React.useCallback((story, columnKey, index) => {
+  const renderCell = useCallback((story, columnKey, index) => {
     const cellValue = story[columnKey];
 
     switch (columnKey) {
@@ -239,19 +251,19 @@ const StoryList = () => {
     }
   }, [page]);
 
-  const onNextPage = React.useCallback(() => {
+  const onNextPage = useCallback(() => {
     if (page < pages) {
       setPage(page + 1);
     }
   }, [page, pages]);
 
-  const onPreviousPage = React.useCallback(() => {
+  const onPreviousPage = useCallback(() => {
     if (page > 1) {
       setPage(page - 1);
     }
   }, [page]);
 
-  const onSearchChange = React.useCallback((value) => {
+  const onSearchChange = useCallback((value) => {
     if (value) {
       setFilterValue(value);
       setPage(1);
@@ -260,12 +272,12 @@ const StoryList = () => {
     }
   }, []);
 
-  const onClear = React.useCallback(() => {
+  const onClear = useCallback(() => {
     setFilterValue('');
     setPage(1);
   }, []);
 
-  const topContent = React.useMemo(() => {
+  const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
@@ -282,26 +294,28 @@ const StoryList = () => {
             <Popover>
               <PopoverTrigger>
                 <Button isIconOnly variant="flat" radius="full" className="bg-white border">
-                  <FilterIcon/>
+                  <FilterIcon />
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
-                <div className="p-4 flex flex-col gap-3">
-                  <Input 
-                    placeholder="Category" 
-                    value={categoryFilter} 
-                    onChange={(e) => setCategoryFilter(e.target.value)}
+                <div className="p-4 flex flex-col gap-3 bg-white">
+                  <DropdownForm
+                    label="Category"
+                    options={categoryOptions}
+                    selectedValue={tempCategoryFilter ? capitalize(tempCategoryFilter) : ""}
+                    onSelect={setTempCategoryFilter}
                   />
-                  <Input 
-                    placeholder="Status" 
-                    value={statusFilter} 
-                    onChange={(e) => setStatusFilter(e.target.value)}
+                  <DropdownForm
+                    label="Status"
+                    options={statusOptions}
+                    selectedValue={tempStatusFilter ? capitalize(tempStatusFilter) : ""}
+                    onSelect={setTempStatusFilter}
                   />
                   <div className="flex justify-end gap-2 mt-2">
                     <Button auto flat color="error" onClick={handleFilterReset}>
                       Reset
                     </Button>
-                    <Button auto onClick={() => handleFilterApply(categoryFilter, statusFilter)}>
+                    <Button auto onClick={handleFilterApply}>
                       Apply
                     </Button>
                   </div>
@@ -317,31 +331,30 @@ const StoryList = () => {
     );
   }, [
     filterValue,
-    categoryFilter,
-    statusFilter,
-    stories.length,
+    tempCategoryFilter,
+    tempStatusFilter,
     onSearchChange,
     onClear,
   ]);
 
-  const bottomContent = React.useMemo(() => {
+  const bottomContent = useMemo(() => {
     return (
-    <div className="flex justify-between items-center">
-      <span className="text-default-400 text-small">Menampilkan {rowsPerPage} dari {stories.length} data</span>
-      <div className="py-2 px-2 flex justify-end items-center">
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-        />
+      <div className="flex justify-between items-center">
+        <span className="text-default-400 text-small">Menampilkan {items.length < rowsPerPage? items.length: rowsPerPage} dari {filteredItems.length} data</span>
+        <div className="py-2 px-2 flex justify-end items-center">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="primary"
+            page={page}
+            total={pages}
+            onChange={setPage}
+          />
+        </div>
       </div>
-    </div>
     );
-  }, [page, pages, onPreviousPage, onNextPage]);
+  }, [page, pages, onPreviousPage, onNextPage, filteredItems]);
 
   return (
     <div className="px-6">
