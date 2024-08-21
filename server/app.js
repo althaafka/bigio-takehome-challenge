@@ -2,9 +2,10 @@ const express = require('express');
 const sequelize = require('./config/database');
 const cors = require('cors');
 
-// const storyRoutes = require('./routes/storyRoutes');
+const storyRoutes = require('./routes/story');
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -16,6 +17,8 @@ sequelize.sync().then(() => {
     console.error('Error syncing database:', err);
 });
 
-// app.use('/api/stories', storyRoutes);
+app.use('/api/stories', storyRoutes);
 
-module.exports = app;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
