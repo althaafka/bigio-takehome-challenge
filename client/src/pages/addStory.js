@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import DropdownForm from '../components/DropdownForm';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { VerticalDotsIcon } from '../components/icons/VerticalDotsIcon';
-import {  Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from '@nextui-org/react';
+import { Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import { PlusIcon } from '../components/icons/PlusIcon';
+import { useStory } from '../context/StoryContext'; 
+import { useNavigate } from 'react-router-dom';
 
 const categoryOptions = [
   { name: 'Financial', uid: 'financial' },
@@ -23,7 +25,8 @@ const AddStory = () => {
   const [category, setCategory] = useState('');
   const [status, setStatus] = useState('');
   const [tags, setTags] = useState([]);
-  const [chapters, setChapters] = useState([]);
+  const { chapters } = useStory(); 
+  const navigate = useNavigate();
 
   const handleDelete = (i) => {
     setTags(tags.filter((_, index) => index !== i));
@@ -31,18 +34,6 @@ const AddStory = () => {
 
   const handleAddition = (tag) => {
     setTags([...tags, tag]);
-  };
-
-  const handleAddChapter = () => {
-    const newChapter = {
-      title: `Chapter ${chapters.length + 1}`,
-      lastUpdated: new Date().toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      }),
-    };
-    setChapters([...chapters, newChapter]);
   };
 
   const handleSaveStory = () => {
@@ -53,11 +44,14 @@ const AddStory = () => {
       category,
       status,
       tags,
-      chapters,
+      chapters, 
     };
     console.log(data);
-    // Add logic to save the story
   };
+
+  const handleAddChapter = () => {
+    navigate('/story/add-chapter')
+  }
 
   const handleCancel = () => {
     // Add logic to handle cancellation
@@ -168,19 +162,19 @@ const AddStory = () => {
                   <td className="px-4 py-2 border-t">{chapter.title}</td>
                   <td className="px-4 py-2 border-t">{chapter.lastUpdated}</td>
                   <td className="px-4 py-2 border-t text-right">
-                  <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <VerticalDotsIcon className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+                    <div className="relative flex justify-end items-center gap-2">
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button isIconOnly size="sm" variant="light">
+                            <VerticalDotsIcon className="text-default-300" />
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu>
+                          <DropdownItem>Edit</DropdownItem>
+                          <DropdownItem>Delete</DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
+                    </div>
                   </td>
                 </tr>
               ))}
