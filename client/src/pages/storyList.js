@@ -13,7 +13,6 @@ import {
   DropdownMenu,
   DropdownItem,
   Chip,
-  Pagination,
   Popover,
   PopoverTrigger,
   PopoverContent
@@ -23,6 +22,7 @@ import { VerticalDotsIcon } from '../components/icons/VerticalDotsIcon';
 import { SearchIcon } from '../components/icons/SearchIcon';
 import { FilterIcon } from '../components/icons/FilterIcon';
 import DropdownForm from '../components/DropdownForm';
+import CustomPagination from '../components/CustomPagination';
 
 const columns = [
   { name: "No", uid: "nomor" },
@@ -322,7 +322,7 @@ const StoryList = () => {
                 </div>
               </PopoverContent>
             </Popover>
-            <Button color="primary" endContent={<PlusIcon />}>
+            <Button color="primary" endContent={<PlusIcon />} className="bg-orange1 rounded-full !important">
               Add New
             </Button>
           </div>
@@ -342,15 +342,11 @@ const StoryList = () => {
       <div className="flex justify-between items-center">
         <span className="text-default-400 text-small">Menampilkan {items.length < rowsPerPage? items.length: rowsPerPage} dari {filteredItems.length} data</span>
         <div className="py-2 px-2 flex justify-end items-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="primary"
-            page={page}
-            total={pages}
-            onChange={setPage}
-          />
+            <CustomPagination
+                page={page}
+                setPage={setPage}
+                total={pages}
+            />
         </div>
       </div>
     );
