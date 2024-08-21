@@ -1,7 +1,9 @@
+const {nextui} = require('@nextui-org/theme');
 // tailwind.config.js
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
+    "./node_modules/@nextui-org/theme/dist/components/(chip|pagination|table|checkbox|spacer).js"
   ],
   theme: {
     extend: {
@@ -11,5 +13,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [nextui()],
 }

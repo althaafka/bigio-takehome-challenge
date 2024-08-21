@@ -3,8 +3,8 @@ import { Outlet, Link } from 'react-router-dom';
 
 const Layout = () => {
   return (
-    <div className="flex h-screen bg-gray-100">
-      <aside className="w-64 bg-white text-black flex flex-col">
+    <div className="flex h-screen">
+      <aside className="w-64 bg-white text-black flex flex-col shadow-md">
         <div className="flex items-center justify-center px-4 py-6">
           <svg
             className="svg-icon mr-2"
