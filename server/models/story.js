@@ -29,23 +29,9 @@ module.exports = (sequelize, DataTypes) => {
         },
     });
 
-    const Chapter = sequelize.define('Chapter', {
-        title: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        content: {
-            type: DataTypes.TEXT,
-            allowNull: false,
-        },
-        lastUpdated: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-        },
-    });
-
-    Story.hasMany(Chapter, { as: 'chapters', foreignKey: 'storyId' });
-    Chapter.belongsTo(Story, { foreignKey: 'storyId' });
+    Story.associate = (models) => {
+        Story.hasMany(models.Chapter, { as: 'chapters', foreignKey: 'storyId' });
+    };
 
     return Story;
 };

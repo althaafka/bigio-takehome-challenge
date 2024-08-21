@@ -28,10 +28,11 @@ const AddStory = () => {
   const [category, setCategory] = useState(storyData.category);
   const [status, setStatus] = useState(storyData.status);
   const [tags, setTags] = useState(storyData.tags);
+  const [coverImage, setCoverImage] = useState(null);
 
   useEffect(() => {
     updateStoryData({ title, writer, synopsis, category, status, tags });
-  }, [title, writer, synopsis, category, status, tags, updateStoryData]);
+  }, [title, writer, synopsis, category, status, tags]);
 
   const handleDelete = (i) => {
     setTags(tags.filter((_, index) => index !== i));
@@ -41,18 +42,38 @@ const AddStory = () => {
     setTags([...tags, tag]);
   };
 
-  const handleSaveStory = () => {
-    const data = {
-      title,
-      writer,
-      synopsis,
-      category,
-      status,
-      tags,
-      chapters, 
-    };
-    console.log(data);
-    // Add logic to save the story
+  const handleFileChange = (e) => {
+    setCoverImage(e.target.files[0]);
+  };
+
+  const handleSaveStory = async () => {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('author', writer);
+    formData.append('synopsis', synopsis);
+    formData.append('category', category);
+    formData.append('status', status);
+    formData.append('tags', JSON.stringify(tags));
+    formData.append('chapters', JSON.stringify(chapters));
+    if (coverImage) {
+      formData.append('coverImage', coverImage);
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/stories', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Story saved successfully:', result);
+      } else {
+        console.error('Failed to save story:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error saving story:', error);
+    }
   };
 
   const handleAddChapter = () => {
@@ -60,7 +81,6 @@ const AddStory = () => {
   }
 
   const handleCancel = () => {
-    // Add logic to handle cancellation
   };
 
   return (
@@ -136,6 +156,7 @@ const AddStory = () => {
             <input
               className="mt-1 p-1 block w-full border rounded"
               type="file"
+              onChange={handleFileChange}
             />
           </div>
           <div>

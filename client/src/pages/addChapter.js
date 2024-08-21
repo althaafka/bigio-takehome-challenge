@@ -14,11 +14,7 @@ const AddChapter = () => {
     const newChapter = {
       title,
       content,
-      lastUpdated: new Date().toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      }),
+      lastUpdated: new Date().toISOString(), 
     };
 
     addChapter(newChapter);
