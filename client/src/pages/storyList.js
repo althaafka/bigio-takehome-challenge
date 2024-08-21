@@ -14,11 +14,14 @@ import {
   DropdownItem,
   Chip,
   Pagination,
+  Popover,
+  PopoverTrigger,
+  PopoverContent
 } from '@nextui-org/react';
 import { PlusIcon } from '../components/icons/PlusIcon';
 import { VerticalDotsIcon } from '../components/icons/VerticalDotsIcon';
 import { SearchIcon } from '../components/icons/SearchIcon';
-import { ChevronDownIcon } from '../components/icons/ChevronDownIcon';
+import { FilterIcon } from '../components/icons/FilterIcon';
 
 const columns = [
     { name: "No", uid: "nomor" },  
@@ -29,7 +32,7 @@ const columns = [
     { name: "Status", uid: "status" },
     { name: "", uid: "actions" },
   ];
-  
+
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -122,26 +125,20 @@ const stories = [
   },
 ];
 
-
 const statusColorMap = {
   publish: 'success',
   draft: 'warning',
 };
 
 const INITIAL_VISIBLE_COLUMNS = ['nomor', 'title', 'writer', 'category', 'keywords', 'status', 'actions'];
-const rowsPerPage = 5;
+const rowsPerPage = 8;
 
 const StoryList = () => {
   const [filterValue, setFilterValue] = React.useState('');
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [statusFilter, setStatusFilter] = React.useState('all');
-  const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: 'title',
-    direction: 'ascending',
-  });
+  const [categoryFilter, setCategoryFilter] = React.useState('');
+  const [statusFilter, setStatusFilter] = React.useState('');
   const [page, setPage] = React.useState(1);
-
-  const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === 'all') return columns;
@@ -152,20 +149,26 @@ const StoryList = () => {
   const filteredItems = React.useMemo(() => {
     let filteredStories = [...stories];
 
-    if (hasSearchFilter) {
-      filteredStories = filteredStories.filter((story) =>
-        story.title.toLowerCase().includes(filterValue.toLowerCase()) ||
-        story.writer.toLowerCase().includes(filterValue.toLowerCase())
+    if (filterValue) {
+      filteredStories = filteredStories.filter(
+        (story) =>
+          story.title.toLowerCase().includes(filterValue.toLowerCase()) ||
+          story.writer.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (statusFilter !== 'all' && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredStories = filteredStories.filter((story) =>
-        Array.from(statusFilter).includes(story.status)
+    if (categoryFilter) {
+      filteredStories = filteredStories.filter(
+        (story) => story.category.toLowerCase() === categoryFilter.toLowerCase()
+      );
+    }
+    if (statusFilter) {
+      filteredStories = filteredStories.filter(
+        (story) => story.status.toLowerCase() === statusFilter.toLowerCase()
       );
     }
 
     return filteredStories;
-  }, [stories, filterValue, statusFilter]);
+  }, [filterValue, categoryFilter, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -176,15 +179,15 @@ const StoryList = () => {
     return filteredItems.slice(start, end);
   }, [page, filteredItems]);
 
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column];
-      const second = b[sortDescriptor.column];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+  const handleFilterApply = (category, status) => {
+    setCategoryFilter(category);
+    setStatusFilter(status);
+  };
 
-      return sortDescriptor.direction === 'descending' ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
+  const handleFilterReset = () => {
+    setCategoryFilter('');
+    setStatusFilter('');
+  };
 
   const renderCell = React.useCallback((story, columnKey, index) => {
     const cellValue = story[columnKey];
@@ -276,48 +279,35 @@ const StoryList = () => {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                  Status
+            <Popover>
+              <PopoverTrigger>
+                <Button isIconOnly variant="flat" radius="full" className="bg-white border">
+                  <FilterIcon/>
                 </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {capitalize(column.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+              </PopoverTrigger>
+              <PopoverContent>
+                <div className="p-4 flex flex-col gap-3">
+                  <Input 
+                    placeholder="Category" 
+                    value={categoryFilter} 
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                  />
+                  <Input 
+                    placeholder="Status" 
+                    value={statusFilter} 
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  />
+                  <div className="flex justify-end gap-2 mt-2">
+                    <Button auto flat color="error" onClick={handleFilterReset}>
+                      Reset
+                    </Button>
+                    <Button auto onClick={() => handleFilterApply(categoryFilter, statusFilter)}>
+                      Apply
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             <Button color="primary" endContent={<PlusIcon />}>
               Add New
             </Button>
@@ -327,8 +317,8 @@ const StoryList = () => {
     );
   }, [
     filterValue,
+    categoryFilter,
     statusFilter,
-    visibleColumns,
     stories.length,
     onSearchChange,
     onClear,
@@ -359,31 +349,26 @@ const StoryList = () => {
         <h2 className="text-2xl font-bold">Story Management</h2>
       </div>
       <Table
-        aria-label="Example table with custom cells, pagination and sorting"
+        aria-label=""
         isHeaderSticky
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
-        classNames={{
-          wrapper: 'max-h-[382px]',
-        }}
-        sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
-        onSortChange={setSortDescriptor}
+        className="bg-gray1 p-4 mt-6"
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
             <TableColumn
               key={column.uid}
               align={column.uid === 'actions' ? 'center' : 'start'}
-              allowsSorting={column.sortable}
             >
               {column.name}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={'No stories found'} items={sortedItems}>
-          {sortedItems.map((item, index) => (
+        <TableBody emptyContent={'No stories found'} items={items}>
+          {items.map((item, index) => (
             <TableRow key={item.id}>
               {headerColumns.map((column) => (
                 <TableCell key={column.uid}>
