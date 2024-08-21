@@ -8,10 +8,16 @@ import { useStory } from '../context/StoryContext';
 import { useNavigate } from 'react-router-dom';
 
 const categoryOptions = [
-  { name: 'Financial', uid: 'financial' },
-  { name: 'Technology', uid: 'technology' },
-  { name: 'Health', uid: 'health' },
-];
+    { name: "Adventure", uid: "adventure" },
+    { name: "Mystery", uid: "mystery" },
+    { name: "Romance", uid: "romance" },
+    { name: "Science", uid: "science" },
+    { name: "Fantasy", uid: "fantasy" },
+    { name: "History", uid: "history" },
+    { name: "Action", uid: "action" },
+    { name: "Strategy", uid: "strategy" },
+  ];
+  
 
 const statusOptions = [
   { name: 'Publish', uid: 'publish' },
@@ -67,7 +73,7 @@ const AddStory = () => {
   
       if (response.ok) {
         const result = await response.json();
-        console.log('Story saved successfully:', result);
+        navigate('/story')
       } else {
         console.error('Failed to save story:', response.statusText);
       }

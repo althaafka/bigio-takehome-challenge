@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useLayoutEffect } from 'react';
 import {
   Table,
   TableHeader,
@@ -35,13 +35,8 @@ const columns = [
 ];
 
 function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
-
-const statusOptions = [
-  { name: "Draft", uid: "draft" },
-  { name: "Publish", uid: "publish" },
-];
 
 const categoryOptions = [
   { name: "Adventure", uid: "adventure" },
@@ -54,92 +49,15 @@ const categoryOptions = [
   { name: "Strategy", uid: "strategy" },
 ];
 
-const stories = [
-  {
-    id: 1,
-    title: "The Journey Begins",
-    writer: "John Doe",
-    category: "Adventure",
-    keywords: ["journey", "adventure", "begins"],
-    status: "publish",
-  },
-  {
-    id: 2,
-    title: "Mystery of the Old House",
-    writer: "Jane Smith",
-    category: "Mystery",
-    keywords: ["mystery", "old house", "ghost"],
-    status: "draft",
-  },
-  {
-    id: 3,
-    title: "Love in the Time of Cholera",
-    writer: "Gabriel Garcia Marquez",
-    category: "Romance",
-    keywords: ["love", "cholera", "romance"],
-    status: "publish",
-  },
-  {
-    id: 4,
-    title: "The Science of Everything",
-    writer: "Isaac Newton",
-    category: "Science",
-    keywords: ["science", "everything", "physics"],
-    status: "publish",
-  },
-  {
-    id: 5,
-    title: "Fantasy World",
-    writer: "J.K. Rowling",
-    category: "Fantasy",
-    keywords: ["fantasy", "magic", "wizard"],
-    status: "draft",
-  },
-  {
-    id: 6,
-    title: "The History of Time",
-    writer: "Stephen Hawking",
-    category: "History",
-    keywords: ["history", "time", "universe"],
-    status: "publish",
-  },
-  {
-    id: 7,
-    title: "The Last Stand",
-    writer: "Chris Evans",
-    category: "Action",
-    keywords: ["action", "battle", "stand"],
-    status: "draft",
-  },
-  {
-    id: 8,
-    title: "The Mystery of the Missing Artifact",
-    writer: "Agatha Christie",
-    category: "Mystery",
-    keywords: ["mystery", "artifact", "missing"],
-    status: "publish",
-  },
-  {
-    id: 9,
-    title: "The Art of War",
-    writer: "Sun Tzu",
-    category: "Strategy",
-    keywords: ["strategy", "war", "art"],
-    status: "draft",
-  },
-  {
-    id: 10,
-    title: "The Secrets of the Universe",
-    writer: "Carl Sagan",
-    category: "Science",
-    keywords: ["universe", "secrets", "science"],
-    status: "publish",
-  },
+
+const statusOptions = [
+{ name: 'Publish', uid: 'Publish' },
+{ name: 'Draft', uid: 'Draft' },
 ];
 
 const statusColorMap = {
-  publish: 'success',
-  draft: 'warning',
+  Publish: 'success',
+  Draft: 'warning',
 };
 
 const INITIAL_VISIBLE_COLUMNS = ['nomor', 'title', 'writer', 'category', 'keywords', 'status', 'actions'];
@@ -153,6 +71,21 @@ const StoryList = () => {
   const [tempCategoryFilter, setTempCategoryFilter] = useState('');
   const [tempStatusFilter, setTempStatusFilter] = useState('');
   const [page, setPage] = useState(1);
+  const [stories, setStories] = useState([]); 
+
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/stories');
+        const data = await response.json();
+        setStories(data);
+      } catch (error) {
+        console.error('Error fetching stories:', error);
+      }
+    };
+
+    fetchStories();
+  }, []); 
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === 'all') return columns;
@@ -181,7 +114,7 @@ const StoryList = () => {
     }
 
     return filteredStories;
-  }, [filterValue, categoryFilter, statusFilter]);
+  }, [filterValue, categoryFilter, statusFilter, stories]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -202,8 +135,8 @@ const StoryList = () => {
   };
 
   const renderCell = useCallback((story, columnKey, index) => {
-    const cellValue = story[columnKey];
-
+    let cellValue = story[columnKey];
+  
     switch (columnKey) {
       case 'nomor':
         return <span>{index + 1 + (page - 1) * rowsPerPage}</span>;
@@ -214,13 +147,19 @@ const StoryList = () => {
       case 'category':
         return <span>{cellValue}</span>;
       case 'keywords':
+        console.log(cellValue)
+        cellValue = JSON.parse(cellValue)
         return (
           <div className="flex flex-wrap gap-1">
-            {cellValue.map((keyword, idx) => (
-              <Chip key={idx} className="capitalize" size="sm" variant="flat">
-                {keyword}
-              </Chip>
-            ))}
+            {Array.isArray(cellValue) ? (
+              cellValue.map((keyword, idx) => (
+                <Chip key={idx} className="capitalize" size="sm" variant="flat">
+                  {keyword.text} 
+                </Chip>
+              ))
+            ) : (
+              <span>No keywords</span>
+            )}
           </div>
         );
       case 'status':
@@ -249,6 +188,7 @@ const StoryList = () => {
         return cellValue;
     }
   }, [page]);
+  
 
   const onNextPage = useCallback(() => {
     if (page < pages) {
