@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import StoryForm from './StoryForm';
+import StoryForm from '../components/StoryForm';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const StoryDetail = () => {

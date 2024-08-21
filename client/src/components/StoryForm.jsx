@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DropdownForm from '../components/DropdownForm';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { VerticalDotsIcon } from '../components/icons/VerticalDotsIcon';
+import { PlusIcon } from '../components/icons/PlusIcon';
 import { Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import { useStory } from '../context/StoryContext'; 
 import { useNavigate } from 'react-router-dom';
@@ -68,6 +69,10 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
       await onSave(formData);
     }
   };
+
+  const handleAddChapter = () => {
+    if (!readOnly) navigate('/story/add-chapter');
+  }
 
   return (
     <div className="container mx-auto px-6">
@@ -163,6 +168,11 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
         </div>
 
         <div className="mt-8">
+          <div className="mb-4 flex justify-end">
+            <Button color="primary" endContent={<PlusIcon />} className="bg-orange1 rounded-full !important" onClick={handleAddChapter}>
+              Add New
+            </Button>
+          </div>
           <table className="min-w-full bg-white border rounded text-sm">
             <thead>
               <tr>

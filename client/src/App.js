@@ -6,6 +6,7 @@ import Layout from './pages/layout';
 import StoryList from './pages/storyList'
 import AddStory from './pages/addStory';
 import AddChapter from './pages/addChapter';
+import StoryDetail from './pages/storyDetail';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path='story' element={<StoryList />} />
             <Route path='story/add' element={<AddStory />} />
             <Route path='story/add-chapter' element={<AddChapter />} />
+            <Route path='story/:id' element={<StoryDetail />} />
           </Route>
         </Routes>
       </Router>
