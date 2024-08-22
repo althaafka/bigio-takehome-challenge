@@ -93,6 +93,7 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
   const handleDeleteChapter = (chapterId) => {
     if (!readOnly) {
       setChapters(chapters.filter(chapter => chapter.id !== chapterId));
+      
     }
   };
 

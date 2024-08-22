@@ -1,4 +1,6 @@
 const { Story, Chapter } = require('../models');
+const { Op } = require('sequelize');
+
 
 exports.getStories = async (req, res) => {
     try {
@@ -125,19 +127,25 @@ exports.updateStory = [
 
       if (chapters) {
         const parsedChapters = JSON.parse(chapters);
+        const chapterIds = [];
 
         for (const chapter of parsedChapters) {
-          if (chapter.id){
+          if (chapter.id) {
             const existingChapter = await Chapter.findOne({ where: { id: chapter.id, storyId: id } });
             if (existingChapter) {
               await existingChapter.update(chapter);
+              chapterIds.push(chapter.id); 
             } else {
-              await Chapter.create({ ...chapter, storyId: id });
+              const newChapter = await Chapter.create({ ...chapter, storyId: id });
+              chapterIds.push(newChapter.id); 
             }
           } else {
-            await Chapter.create({ ...chapter, storyId: id });
+            const newChapter = await Chapter.create({ ...chapter, storyId: id });
+            chapterIds.push(newChapter.id); 
           }
         }
+
+        await Chapter.destroy({ where: { storyId: id, id: { [Op.notIn]: chapterIds } } });
       }
 
       await story.save();
