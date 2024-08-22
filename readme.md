@@ -12,7 +12,7 @@ This project is a web application that allows users to manage stories. Users can
 - [APK Link](#apk-link)
 
 ## <a name="features"></a> Features :
-You may list what feature you created, example :
+The project includes the following features:
 - Story List & Filtering
 - Add Story
 - Story Detail
@@ -21,7 +21,7 @@ You may list what feature you created, example :
 - Edit Chapter
 
 ## <a name="libraries"></a> Libraries :
-You may list what libraries you used in this project, example :
+This project uses the following libraries:
 - ExpressJS
 - ReactJS
 - Sequlize
@@ -33,6 +33,7 @@ client:
 * `components`
 * `context`
 * `pages`
+
 server:
 * `config`
 * `controllers`
