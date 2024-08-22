@@ -97,3 +97,49 @@ exports.getStoryById = async (req, res) => {
       res.status(500).json({ message: err.message });
   }
 };
+
+exports.updateStory = [
+  upload.single('coverImage'),
+  async (req, res) => {
+    const { id } = req.params;
+    const { title, author, synopsis, category, tags, status, chapters } = req.body;
+    const coverImage = req.file ? req.file.filename : null;
+
+    try {
+      const story = await Story.findOne({ where: { id } });
+
+      if (!story) {
+        return res.status(404).json({ message: 'Story not found' });
+      }
+
+      story.title = title || story.title;
+      story.author = author || story.author;
+      story.synopsis = synopsis || story.synopsis;
+      story.category = category || story.category;
+      story.status = status || story.status;
+      if (tags) {
+        story.tags = JSON.parse(tags);
+      }
+      if (coverImage) {
+        story.coverImage = coverImage;
+      }
+
+      if (chapters) {
+        const parsedChapters = JSON.parse(chapters);
+
+        await Chapter.destroy({ where: { storyId: id } });
+
+        for (const chapter of parsedChapters) {
+          await Chapter.create({ ...chapter, storyId: id });
+        }
+      }
+
+      await story.save();
+
+      res.status(200).json({ message: 'Story updated successfully', story });
+    } catch (err) {
+      console.log('Error:', err.message);
+      res.status(500).json({ message: err.message });
+    }
+  }
+];

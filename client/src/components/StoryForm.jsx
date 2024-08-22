@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import DropdownForm from '../components/DropdownForm';
-import { WithContext as ReactTags } from 'react-tag-input';
-import { VerticalDotsIcon } from '../components/icons/VerticalDotsIcon';
-import { PlusIcon } from '../components/icons/PlusIcon';
-import { Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from '@nextui-org/react';
-import { useStory } from '../context/StoryContext'; 
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { WithContext as ReactTags } from 'react-tag-input';
+import DropdownForm from '../components/DropdownForm';
+import { PlusIcon } from '../components/icons/PlusIcon';
+import { VerticalDotsIcon } from '../components/icons/VerticalDotsIcon';
+import { useStory } from '../context/StoryContext';
 
 const categoryOptions = [
-    { name: "Adventure", uid: "adventure" },
-    { name: "Mystery", uid: "mystery" },
-    { name: "Romance", uid: "romance" },
-    { name: "Science", uid: "science" },
-    { name: "Fantasy", uid: "fantasy" },
-    { name: "History", uid: "history" },
-    { name: "Action", uid: "action" },
-    { name: "Strategy", uid: "strategy" },
+  { name: "Adventure", uid: "adventure" },
+  { name: "Mystery", uid: "mystery" },
+  { name: "Romance", uid: "romance" },
+  { name: "Science", uid: "science" },
+  { name: "Fantasy", uid: "fantasy" },
+  { name: "History", uid: "history" },
+  { name: "Action", uid: "action" },
+  { name: "Strategy", uid: "strategy" },
 ];
 
 const statusOptions = [
@@ -72,7 +72,7 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
   };
 
   const handleAddChapter = () => {
-    if (!readOnly) navigate('/story/add-chapter');
+    if (!readOnly) navigate('/chapter/add');
   }
 
   return (
