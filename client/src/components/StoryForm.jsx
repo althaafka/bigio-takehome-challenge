@@ -24,7 +24,7 @@ const statusOptions = [
 ];
 
 const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
-  const { chapters, storyData, updateStoryData } = useStory();
+  const { chapters: contextChapters, storyData, updateStoryData } = useStory();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState(story.title || storyData.title);
@@ -32,8 +32,9 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
   const [synopsis, setSynopsis] = useState(story.synopsis || storyData.synopsis);
   const [category, setCategory] = useState(story.category || storyData.category);
   const [status, setStatus] = useState(story.status || storyData.status);
-  const [tags, setTags] = useState(story.tags || storyData.tags);
-  const [coverImage, setCoverImage] = useState(null);
+  const [tags, setTags] = useState(JSON.parse(story.keywords) || storyData.tags);
+  const [coverImage, setCoverImage] = useState(story.coverImage || null); // Initialize with story.coverImage
+  const [chapters, setChapters] = useState(story.chapters || contextChapters);
 
   useEffect(() => {
     if (!readOnly) {
@@ -63,7 +64,7 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
       formData.append('status', status);
       formData.append('tags', JSON.stringify(tags));
       formData.append('chapters', JSON.stringify(chapters));
-      if (coverImage) {
+      if (coverImage && typeof coverImage !== 'string') {
         formData.append('coverImage', coverImage);
       }
       await onSave(formData);
@@ -149,6 +150,11 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
         <div className="grid grid-cols-2 gap-6 mt-4">
           <div>
             <label className="block text-sm font-medium">Cover Image</label>
+            {coverImage && typeof coverImage === 'string' && (
+              <div className="mb-2">
+                <img src={`http://localhost:5000/uploads/${coverImage}`} alt="Cover" className="w-full h-auto rounded" />
+              </div>
+            )}
             <input
               className="mt-1 p-1 block w-full border rounded"
               type="file"

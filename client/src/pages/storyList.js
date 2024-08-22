@@ -23,6 +23,7 @@ import { SearchIcon } from '../components/icons/SearchIcon';
 import { FilterIcon } from '../components/icons/FilterIcon';
 import DropdownForm from '../components/DropdownForm';
 import CustomPagination from '../components/CustomPagination';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
   { name: "No", uid: "nomor" },
@@ -72,6 +73,7 @@ const StoryList = () => {
   const [tempStatusFilter, setTempStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const [stories, setStories] = useState([]); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -178,8 +180,8 @@ const StoryList = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem onClick={() => handleView(story.id)}>View</DropdownItem>
+                <DropdownItem >Edit</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -215,6 +217,14 @@ const StoryList = () => {
     setFilterValue('');
     setPage(1);
   }, []);
+
+  const handleAddStories = () => {
+    navigate('/story/add')
+  }
+
+  const handleView = (id) => {
+    navigate(`/story/${id}`);
+  };
 
   const topContent = useMemo(() => {
     return (
@@ -261,7 +271,7 @@ const StoryList = () => {
                 </div>
               </PopoverContent>
             </Popover>
-            <Button color="primary" endContent={<PlusIcon />} className="bg-orange1 rounded-full !important">
+            <Button color="primary" endContent={<PlusIcon />} className="bg-orange1 rounded-full !important" onClick={handleAddStories}>
               Add New
             </Button>
           </div>

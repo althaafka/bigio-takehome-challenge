@@ -63,3 +63,37 @@ exports.addStory = [
     }
   }
 ];
+
+
+exports.getStoryById = async (req, res) => {
+  const { id } = req.params; 
+
+  try {
+      const story = await Story.findOne({
+          where: { id },
+          attributes: [
+              'id',
+              ['title', 'title'],
+              ['author', 'writer'],
+              ['category', 'category'],
+              ['tags', 'keywords'],
+              ['status', 'status'],
+              'synopsis',
+              'coverImage',
+          ],
+          include: [{
+              model: Chapter,
+              as: 'chapters',
+              attributes: ['title', 'content', 'lastUpdated'], 
+          }],
+      });
+
+      if (!story) {
+          return res.status(404).json({ message: 'Story not found' });
+      }
+
+      res.status(200).json(story);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+};

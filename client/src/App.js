@@ -17,7 +17,7 @@ function App() {
             <Route path='story' element={<StoryList />} />
             <Route path='story/add' element={<AddStory />} />
             <Route path='story/add-chapter' element={<AddChapter />} />
-            <Route path='story/:id' element={<StoryDetail />} />
+            <Route path='story/:storyId' element={<StoryDetail />} />
           </Route>
         </Routes>
       </Router>
