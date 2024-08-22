@@ -19,11 +19,11 @@ const EditChapter = () => {
 
   const handleSave = (updatedChapter) => {
     updateChapter({...updatedChapter, id: Number(chapterId)});
-    navigate(`/story/${storyId}`);
+    navigate(`/story/${storyId}/edit`);
   };
 
   const handleCancel = () => {
-    navigate(`/story/${storyId}`);
+    navigate(`/story/${storyId}/edit`);
   };
 
   return chapter ? (

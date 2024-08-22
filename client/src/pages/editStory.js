@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import StoryForm from '../components/StoryForm';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useStory } from '../context/StoryContext';
 
 const EditStory = () => {
+  const { storyData } = useStory()
   const { storyId } = useParams();
   const [story, setStory] = useState(null);
   const navigate = useNavigate();
@@ -10,9 +12,16 @@ const EditStory = () => {
   useEffect(() => {
     const fetchStory = async () => {
       try {
+        console.log("storyid", storyId)
         const response = await fetch(`http://localhost:5000/api/stories/${storyId}`);
         const data = await response.json();
-        setStory(data);
+        
+        console.log("asd: ", data, storyData)
+        if (data.id == storyData.id){
+          setStory({...storyData, coverImage: data.coverImage})
+        } else {
+          setStory(data);
+        }
       } catch (error) {
         console.error('Error fetching story:', error);
       }

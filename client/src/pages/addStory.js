@@ -4,7 +4,7 @@ import StoryForm from '../components/StoryForm';
 import { useStory } from '../context/StoryContext';
 
 const StoryAdd = () => {
-  const { chapters, updateStoryData } = useStory(); 
+  const { storyData, updateStoryData } = useStory(); 
   const navigate = useNavigate();
 
   const handleSave = async (formData) => {

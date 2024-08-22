@@ -6,6 +6,7 @@ export const useStory = () => useContext(StoryContext);
 
 export const StoryProvider = ({ children }) => {
   const [storyData, setStoryData] = useState({
+    id: '',
     title: '',
     writer: '',
     synopsis: '',
@@ -39,8 +40,21 @@ export const StoryProvider = ({ children }) => {
     }));
   };
 
+  const resetStoryData = () => {
+    setStoryData({
+      id: '',
+      title: '',
+      writer: '',
+      synopsis: '',
+      category: '',
+      status: '',
+      tags: [],
+      chapters: [],
+    })
+  }
+
   return (
-    <StoryContext.Provider value={{ storyData, addChapter, updateChapter, updateStoryData }}>
+    <StoryContext.Provider value={{ storyData, addChapter, updateChapter, updateStoryData, resetStoryData }}>
       {children}
     </StoryContext.Provider>
   );

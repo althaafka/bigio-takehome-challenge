@@ -9,11 +9,11 @@ const AddChapter = () => {
 
   const handleSave = (newChapter) => {
     addChapter(newChapter);
-    navigate('/story/add');
+    navigate(-1);
   };
 
   const handleCancel = () => {
-    navigate('/story/add');
+    navigate(-1);
   };
 
   return (

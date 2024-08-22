@@ -27,6 +27,7 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
   const { storyData, updateStoryData, addChapter, updateChapter } = useStory();
   const navigate = useNavigate();
 
+  const [id, setId] = useState(story.id || storyData.id || '');
   const [title, setTitle] = useState(story.title || storyData.title);
   const [writer, setWriter] = useState(story.writer || storyData.writer);
   const [synopsis, setSynopsis] = useState(story.synopsis || storyData.synopsis);
@@ -39,7 +40,7 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
 
   useEffect(() => {
     if (!readOnly) {
-      updateStoryData({ title, writer, synopsis, category, status, tags, chapters });
+      updateStoryData({ title, writer, synopsis, category, status, tags, chapters, id });
     }
   }, [])
 
@@ -74,12 +75,15 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
       if (coverImage && typeof coverImage !== 'string') {
         formData.append('coverImage', coverImage);
       }
+      console.log("formdata", formData)
       await onSave(formData);
     }
   };
 
   const handleAddChapter = () => {
-    if (!readOnly) navigate('/chapter/add');
+    if (!readOnly) {
+      navigate('/chapter/add');
+    }
   };
 
   const handleEditChapter = (chapterId) => {

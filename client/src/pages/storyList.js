@@ -24,6 +24,7 @@ import { FilterIcon } from '../components/icons/FilterIcon';
 import DropdownForm from '../components/DropdownForm';
 import CustomPagination from '../components/CustomPagination';
 import { useNavigate } from 'react-router-dom';
+import { useStory } from '../context/StoryContext';
 
 const columns = [
   { name: "No", uid: "nomor" },
@@ -74,6 +75,7 @@ const StoryList = () => {
   const [page, setPage] = useState(1);
   const [stories, setStories] = useState([]); 
   const navigate = useNavigate();
+  const { resetStoryData } = useStory();
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -87,6 +89,7 @@ const StoryList = () => {
     };
 
     fetchStories();
+    resetStoryData();
   }, []); 
 
   const headerColumns = useMemo(() => {

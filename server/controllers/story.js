@@ -126,10 +126,17 @@ exports.updateStory = [
       if (chapters) {
         const parsedChapters = JSON.parse(chapters);
 
-        await Chapter.destroy({ where: { storyId: id } });
-
         for (const chapter of parsedChapters) {
-          await Chapter.create({ ...chapter, storyId: id });
+          if (chapter.id){
+            const existingChapter = await Chapter.findOne({ where: { id: chapter.id, storyId: id } });
+            if (existingChapter) {
+              await existingChapter.update(chapter);
+            } else {
+              await Chapter.create({ ...chapter, storyId: id });
+            }
+          } else {
+            await Chapter.create({ ...chapter, storyId: id });
+          }
         }
       }
 
@@ -137,7 +144,7 @@ exports.updateStory = [
 
       res.status(200).json({ message: 'Story updated successfully', story });
     } catch (err) {
-      console.log('Error:', err.message);
+      console.log('Error:', err);
       res.status(500).json({ message: err.message });
     }
   }
