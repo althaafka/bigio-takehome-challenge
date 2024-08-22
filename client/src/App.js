@@ -4,11 +4,11 @@ import './App.css';
 import { StoryProvider } from './context/StoryContext';
 import AddChapter from './pages/addChapter';
 import AddStory from './pages/addStory';
+import EditChapter from './pages/editChapter';
+import EditStory from './pages/editStory';
 import Layout from './pages/layout';
 import StoryDetail from './pages/storyDetail';
 import StoryList from './pages/storyList';
-import EditStory from './pages/editStory';
-import EditChapter from './pages/editChapter';
 
 function App() {
   return (
@@ -20,7 +20,7 @@ function App() {
             <Route path='story/add' element={<AddStory />} />
             <Route path='story/:storyId' element={<StoryDetail />} />
             <Route path="story/:storyId/edit" element={<EditStory />} />
-            <Route path='chapter/add' element={<AddChapter />} />
+            <Route path='story/chapter/add' element={<AddChapter />} />
             <Route path='story/:storyId/chapter/:chapterId/edit' element={<EditChapter />} />
           </Route>
         </Routes>

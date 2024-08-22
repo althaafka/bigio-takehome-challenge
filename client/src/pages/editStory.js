@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import StoryForm from '../components/StoryForm';
+import PageHeader from '../components/PageHeader'; 
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStory } from '../context/StoryContext';
 
@@ -12,11 +13,9 @@ const EditStory = () => {
   useEffect(() => {
     const fetchStory = async () => {
       try {
-        console.log("storyid", storyId)
         const response = await fetch(`http://localhost:5000/api/stories/${storyId}`);
         const data = await response.json();
         
-        console.log("asd: ", data, storyData)
         if (data.id == storyData.id){
           setStory({...storyData, coverImage: data.coverImage})
         } else {
@@ -51,8 +50,16 @@ const EditStory = () => {
     navigate('/story');
   };
 
+  const breadcrumbItems = [
+    { label: 'Stories Management', path: '/story', active: false },
+    { label: 'Edit Story', path: '', active: true },
+  ];
+
   return story ? (
-    <StoryForm story={story} onSave={handleSave} onCancel={handleCancel} />
+    <div className="container mx-auto px-6">
+      <PageHeader breadcrumbItems={breadcrumbItems} title="Edit Story" />
+      <StoryForm pageTitle="Edit Story" story={story} onSave={handleSave} onCancel={handleCancel} />
+    </div>
   ) : (
     <div>Loading...</div>
   );

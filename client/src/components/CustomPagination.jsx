@@ -11,7 +11,6 @@ const CustomPagination = ({ page, setPage, total }) => {
     isActive,
     onNext,
     onPrevious,
-    setPage,
     className,
   }) => {
     if (value === PaginationItemType.NEXT) {
@@ -48,10 +47,10 @@ const CustomPagination = ({ page, setPage, total }) => {
         ref={ref}
         className={cn(
           className,
+          "min-w-8 w-8 h-8 rounded-lg",
           isActive
-            ? "text-white bg-orange-500 font-bold"
-            : "bg-default-200/50",
-          "min-w-8 w-8 h-8 rounded-lg"
+            ? "bg-gray-700  text-white"
+            : "bg-default-200/50 text-black"
         )}
         onClick={() => setPage(value)}
       >

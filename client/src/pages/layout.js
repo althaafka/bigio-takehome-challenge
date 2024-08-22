@@ -1,7 +1,11 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 
 const Layout = () => {
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname.startsWith(path);
+
   return (
     <div className="flex h-screen">
       <aside className="w-64 bg-white text-black flex flex-col shadow-md">
@@ -27,7 +31,12 @@ const Layout = () => {
         <nav className="flex-grow">
           <ul className="space-y-2">
             <li>
-              <Link to="/" className="py-4 px-6 hover:bg-blue1 hover:text-white flex items-center">
+              <Link
+                to="/"
+                className={`py-4 px-6 flex items-center hover:bg-blue1 hover:text-white ${
+                  isActive('/') && !isActive('/story') ? 'bg-blue1 text-white' : ''
+                }`}
+              >
                 <svg
                   className="mr-4"
                   style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden' }}
@@ -41,7 +50,12 @@ const Layout = () => {
               </Link>
             </li>
             <li>
-              <Link to="/story" className="py-4 px-6 hover:bg-blue1 hover:text-white flex items-center">
+              <Link
+                to="/story"
+                className={`py-4 px-6 flex items-center hover:bg-blue1 hover:text-white ${
+                  isActive('/story') ? 'bg-blue1 text-white' : ''
+                }`}
+              >
                 <svg
                   className="mr-4"
                   style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden' }}

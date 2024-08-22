@@ -26,7 +26,6 @@ const ChapterForm = ({ chapter = {}, readOnly = false, onSave, onCancel }) => {
 
   return (
     <div className="container mx-auto px-6">
-      <h2 className="text-2xl font-bold mb-4">{readOnly ? 'Chapter Details' : 'Add/Edit Chapter'}</h2>
       <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
         <div className="mb-4">
           <label className="block text-sm font-medium">Title</label>

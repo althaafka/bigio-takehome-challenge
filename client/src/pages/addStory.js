@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import StoryForm from '../components/StoryForm';
+import PageHeader from '../components/PageHeader'; // Import PageHeader
 import { useStory } from '../context/StoryContext';
 
 const StoryAdd = () => {
@@ -29,14 +30,22 @@ const StoryAdd = () => {
     navigate('/story');
   };
 
+  const breadcrumbItems = [
+    { label: 'Stories Management', path: '/story', active: false },
+    { label: 'Add Stories', path: '', active: true },
+  ];
 
   return (
-    <StoryForm
-      story={{}}
-      readOnly={false} 
-      onSave={handleSave} 
-      onCancel={handleCancel}
-    />
+    <div className="container mx-auto px-6">
+      <PageHeader breadcrumbItems={breadcrumbItems} title="Add Stories" /> 
+      <StoryForm
+        pageTitle="Add Stories"
+        story={{}}
+        readOnly={false} 
+        onSave={handleSave} 
+        onCancel={handleCancel}
+      />
+    </div>
   );
 };
 

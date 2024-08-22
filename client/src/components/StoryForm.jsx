@@ -23,8 +23,8 @@ const statusOptions = [
   { name: 'Draft', uid: 'draft' },
 ];
 
-const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
-  const { storyData, updateStoryData, addChapter, updateChapter } = useStory();
+const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel, pageTitle }) => {
+  const { storyData, updateStoryData } = useStory();
   const navigate = useNavigate();
 
   const [id, setId] = useState(story.id || storyData.id || '');
@@ -37,12 +37,11 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
   const [coverImage, setCoverImage] = useState(story.coverImage || null);
   const [chapters, setChapters] = useState(story.chapters || storyData.chapters);
 
-
   useEffect(() => {
     if (!readOnly) {
       updateStoryData({ title, writer, synopsis, category, status, tags, chapters, id });
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (!readOnly) {
@@ -82,7 +81,7 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
 
   const handleAddChapter = () => {
     if (!readOnly) {
-      navigate('/chapter/add');
+      navigate('/story/chapter/add');
     }
   };
 
@@ -93,13 +92,17 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
   const handleDeleteChapter = (chapterId) => {
     if (!readOnly) {
       setChapters(chapters.filter(chapter => chapter.id !== chapterId));
-      
     }
+  };
+
+  const formatDate = (date) => {
+    const options = { day: '2-digit', month: 'long', year: 'numeric' };
+    return new Intl.DateTimeFormat('en-GB', options).format(new Date(date));
   };
 
   return (
     <div className="container mx-auto px-6">
-      <h2 className="text-2xl font-bold mb-4">{readOnly ? 'Story Details' : 'Add Stories'}</h2>
+      <h2 className="text-2xl font-bold mb-4">{pageTitle}</h2>
       <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-6">
           <div>
@@ -213,7 +216,7 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
               {chapters.map((chapter, index) => (
                 <tr key={index}>
                   <td className="px-4 py-2 border-t">{chapter.title}</td>
-                  <td className="px-4 py-2 border-t">{chapter.lastUpdated}</td>
+                  <td className="px-4 py-2 border-t">{formatDate(chapter.lastUpdated)}</td>
                   <td className="px-4 py-2 border-t text-right">
                     <div className="relative flex justify-end items-center gap-2">
                       <Dropdown>
