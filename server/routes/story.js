@@ -5,6 +5,6 @@ const storyController = require('../controllers/story');
 router.get('/', storyController.getStories);
 router.post('/', storyController.addStory);
 router.get('/:id', storyController.getStoryById);
-router.put('/:id', updateStory);
+router.put('/:id', storyController.updateStory);
 
 module.exports = router;

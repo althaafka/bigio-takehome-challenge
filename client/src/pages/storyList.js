@@ -181,7 +181,7 @@ const StoryList = () => {
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem onClick={() => handleView(story.id)}>View</DropdownItem>
-                <DropdownItem >Edit</DropdownItem>
+                <DropdownItem onClick={() => handleEdit(story.id)}>Edit</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -225,6 +225,10 @@ const StoryList = () => {
   const handleView = (id) => {
     navigate(`/story/${id}`);
   };
+
+  const handleEdit = (id) => {
+    navigate(`/story/${id}/edit`)
+  }
 
   const topContent = useMemo(() => {
     return (
