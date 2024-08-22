@@ -33,7 +33,6 @@ client:
 * `components`
 * `context`
 * `pages`
-
 server:
 * `config`
 * `controllers`

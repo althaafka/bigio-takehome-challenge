@@ -24,7 +24,6 @@ export const StoryProvider = ({ children }) => {
   };
 
   const updateChapter = (updatedChapter) => {
-    console.log("updated chapter: ", updatedChapter, storyData)
     setStoryData((prevData) => ({
       ...prevData,
       chapters: prevData.chapters.map((chapter) =>

@@ -74,7 +74,6 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel, pageTitle }
       if (coverImage && typeof coverImage !== 'string') {
         formData.append('coverImage', coverImage);
       }
-      console.log("formdata", formData)
       await onSave(formData);
     }
   };

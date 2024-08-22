@@ -152,7 +152,6 @@ const StoryList = () => {
       case 'category':
         return <span>{cellValue}</span>;
       case 'keywords':
-        console.log(cellValue)
         cellValue = JSON.parse(cellValue)
         return (
           <div className="flex flex-wrap gap-1">
