@@ -29,11 +29,11 @@ This project uses the following libraries:
 - Next ui
 
 ## <a name="project-structures"></a> Project Structure :
-client:
+### client:
 * `components`
 * `context`
 * `pages`
-server:
+### server:
 * `config`
 * `controllers`
 * `models`
