@@ -24,7 +24,7 @@ const statusOptions = [
 ];
 
 const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
-  const { chapters: contextChapters, storyData, updateStoryData } = useStory();
+  const { storyData, updateStoryData, addChapter, updateChapter } = useStory();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState(story.title || storyData.title);
@@ -32,21 +32,28 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
   const [synopsis, setSynopsis] = useState(story.synopsis || storyData.synopsis);
   const [category, setCategory] = useState(story.category || storyData.category);
   const [status, setStatus] = useState(story.status || storyData.status);
-  const [tags, setTags] = useState(JSON.parse(story.keywords) || storyData.tags);
-  const [coverImage, setCoverImage] = useState(story.coverImage || null); // Initialize with story.coverImage
-  const [chapters, setChapters] = useState(story.chapters || contextChapters);
+  const [tags, setTags] = useState(story.keywords ? JSON.parse(story.keywords) : storyData.tags);
+  const [coverImage, setCoverImage] = useState(story.coverImage || null);
+  const [chapters, setChapters] = useState(story.chapters || storyData.chapters);
+
 
   useEffect(() => {
     if (!readOnly) {
-      updateStoryData({ title, writer, synopsis, category, status, tags });
+      updateStoryData({ title, writer, synopsis, category, status, tags, chapters });
     }
-  }, [title, writer, synopsis, category, status, tags, readOnly]);
+  }, [])
 
-  const handleDelete = (i) => {
+  useEffect(() => {
+    if (!readOnly) {
+      updateStoryData({ title, writer, synopsis, category, status, tags, chapters });
+    }
+  }, [title, writer, synopsis, category, status, tags, readOnly, chapters]);
+
+  const handleDeleteTag = (i) => {
     setTags(tags.filter((_, index) => index !== i));
   };
 
-  const handleAddition = (tag) => {
+  const handleAddTag = (tag) => {
     setTags([...tags, tag]);
   };
 
@@ -73,7 +80,17 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
 
   const handleAddChapter = () => {
     if (!readOnly) navigate('/chapter/add');
-  }
+  };
+
+  const handleEditChapter = (chapterId) => {
+    if (!readOnly) navigate(`/story/${story.id}/chapter/${chapterId}/edit`);
+  };
+
+  const handleDeleteChapter = (chapterId) => {
+    if (!readOnly) {
+      setChapters(chapters.filter(chapter => chapter.id !== chapterId));
+    }
+  };
 
   return (
     <div className="container mx-auto px-6">
@@ -130,8 +147,8 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
             <label className="block text-sm font-medium mb-2">Tags/Keywords Story</label>
             <ReactTags
               tags={tags}
-              handleDelete={handleDelete}
-              handleAddition={handleAddition}
+              handleDelete={handleDeleteTag}
+              handleAddition={handleAddTag}
               placeholder='Add new tag'
               readOnly={readOnly}
               classNames={{
@@ -201,8 +218,8 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
                           </Button>
                         </DropdownTrigger>
                         <DropdownMenu>
-                          <DropdownItem disabled={readOnly}>Edit</DropdownItem>
-                          <DropdownItem disabled={readOnly}>Delete</DropdownItem>
+                          <DropdownItem disabled={readOnly} onClick={() => handleEditChapter(chapter.id)}>Edit</DropdownItem>
+                          <DropdownItem disabled={readOnly} onClick={() => handleDeleteChapter(chapter.id)}>Delete</DropdownItem>
                         </DropdownMenu>
                       </Dropdown>
                     </div>
@@ -218,7 +235,6 @@ const StoryForm = ({ story = {}, readOnly = false, onSave, onCancel }) => {
             type="button"
             className="mr-4 bg-gray-300 text-black px-4 py-2 rounded-full"
             onClick={onCancel}
-            disabled={readOnly}
           >
             Cancel
           </button>

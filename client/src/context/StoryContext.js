@@ -5,7 +5,6 @@ const StoryContext = createContext();
 export const useStory = () => useContext(StoryContext);
 
 export const StoryProvider = ({ children }) => {
-  const [chapters, setChapters] = useState([]);
   const [storyData, setStoryData] = useState({
     title: '',
     writer: '',
@@ -13,10 +12,24 @@ export const StoryProvider = ({ children }) => {
     category: '',
     status: '',
     tags: [],
+    chapters: [],
   });
 
   const addChapter = (chapter) => {
-    setChapters((prevChapters) => [...prevChapters, chapter]);
+    setStoryData((prevData) => ({
+      ...prevData,
+      chapters: [...prevData.chapters, chapter],
+    }));
+  };
+
+  const updateChapter = (updatedChapter) => {
+    console.log("updated chapter: ", updatedChapter, storyData)
+    setStoryData((prevData) => ({
+      ...prevData,
+      chapters: prevData.chapters.map((chapter) =>
+        chapter.id == updatedChapter.id ? updatedChapter : chapter
+      ),
+    }));
   };
 
   const updateStoryData = (data) => {
@@ -27,7 +40,7 @@ export const StoryProvider = ({ children }) => {
   };
 
   return (
-    <StoryContext.Provider value={{ chapters, addChapter, storyData, updateStoryData }}>
+    <StoryContext.Provider value={{ storyData, addChapter, updateChapter, updateStoryData }}>
       {children}
     </StoryContext.Provider>
   );
